@@ -7,13 +7,12 @@ const initialColor = {
 };
 
 const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
   const [newColor, setNewColor] = useState({
     code: { hex: "" },
     color: "",
-    id: Math.random()
+    id: ""
   });
 
   const editColor = color => {
@@ -52,7 +51,7 @@ const ColorList = ({ colors, updateColors }) => {
       });
   };
 
-  const createColorSubmit = e => {
+  const handleCreate = e => {
     e.preventDefault();
     axiosWithAuth()
       .post(`/colors`, newColor)
@@ -62,14 +61,6 @@ const ColorList = ({ colors, updateColors }) => {
           .then(res => updateColors(res.data))
           .catch(err => console.log(err));
       });
-  };
-
-  const createColorChange = e => {
-    e.preventDefault();
-    setNewColor({
-      ...newColor,
-      [e.target.name]: e.target.value
-    });
   };
 
   return (
@@ -128,13 +119,15 @@ const ColorList = ({ colors, updateColors }) => {
         </form>
       )}
       <div>
-        <h2>Add a New Color Here</h2>
-        <form onSubmit={createColorSubmit}>
+        <h2>New Color</h2>
+        <form onSubmit={handleCreate}>
           <input
             type="text"
             name="color"
             value={newColor.color}
-            onChange={createColorChange}
+            onChange={e =>
+              setNewColor({ ...newColor, color: e.target.value })
+            }
             placeholder="New Color Name"
           />
           <input
@@ -143,8 +136,9 @@ const ColorList = ({ colors, updateColors }) => {
             value={newColor.code.hex}
             onChange={e =>
               setNewColor({
-                ...colorToEdit,
-                code: { hex: e.target.value }
+                ...newColor,
+                code: { hex: e.target.value },
+                id: Math.random()
               })
             }
             placeholder="New Hex Code"
