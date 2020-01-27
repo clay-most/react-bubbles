@@ -11,7 +11,7 @@ const BubblePage = () => {
   useEffect(() => {
     localStorage.getItem("token") &&
       axiosWithAuth()
-        .get(".colors")
+        .get("/colors")
         .then(response => {
           setColorList(response.data);
         })
